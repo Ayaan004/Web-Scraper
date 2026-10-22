@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Web Scraper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-spider"></i>
+                <h1>Web Scraper Pro</h1>
+            </div>
+            <nav class="nav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#documentation" class="nav-link">Docs</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">Extract Data from Any Website</h2>
+                <p class="hero-subtitle">Powerful, fast, and easy-to-use web scraping tool for developers and data analysts</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Scraper Form -->
+            <div class="scraper-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-code"></i> Scrape Configuration</h3>
+                </div>
+                <div class="card-body">
+                    <form id="scrapeForm">
+                        <div class="form-group">
+                            <label for="url">
+                                <i class="fas fa-link"></i> Target URL
+                            </label>
+                            <div class="input-group">
+                                <input 
+                                    type="text" 
+                                    id="url" 
+                                    class="form-control" 
+                                    placeholder="https://example.com"
+                                    required
+                                >
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-play"></i> Scrape Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="scrapeType">
+                                    <i class="fas fa-filter"></i> Scrape Type
+                                </label>
+                                <select id="scrapeType" class="form-control">
+                                    <option value="all">Complete Scrape (All Data)</option>
+                                    <option value="text">Text Content Only</option>
+                                    <option value="links">Links Only</option>
+                                    <option value="images">Images Only</option>
+                                    <option value="headings">Headings Only</option>
+                                    <option value="meta">Meta Tags Only</option>
+                                    <option value="tables">Tables Only</option>
+                                    <option value="custom">Custom CSS Selector</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="customSelectorGroup" style="display: none;">
+                                <label for="customSelector">
+                                    <i class="fas fa-crosshairs"></i> CSS Selector
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="customSelector" 
+                                    class="form-control" 
+                                    placeholder=".class-name or #id"
+                                >
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>Scraping in progress...</p>
+            </div>
+
+            <!-- Results Container -->
+            <div id="resultsContainer" style="display: none;">
+                <!-- Stats Cards -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="scrapeTime">0s</h4>
+                            <p>Scrape Time</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="linksCount">0</h4>
+                            <p>Links Found</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="imagesCount">0</h4>
+                            <p>Images Found</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <i class="fas fa-heading"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="headingsCount">0</h4>
+                            <p>Headings Found</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Actions -->
+                <div class="results-actions">
+                    <button class="btn btn-secondary" onclick="downloadJSON()">
+                        <i class="fas fa-download"></i> Download JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
+                    <button class="btn btn-outline" onclick="clearResults()">
+                        <i class="fas fa-trash"></i> Clear Results
+                    </button>
+                </div>
+
+                <!-- Tabbed Results -->
+                <div class="results-card">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="overview">
+                            <i class="fas fa-chart-pie"></i> Overview
+                        </button>
+                        <button class="tab-btn" data-tab="meta">
+                            <i class="fas fa-tags"></i> Meta Data
+                        </button>
+                        <button class="tab-btn" data-tab="headings">
+                            <i class="fas fa-heading"></i> Headings
+                        </button>
+                        <button class="tab-btn" data-tab="links">
+                            <i class="fas fa-link"></i> Links
+                        </button>
+                        <button class="tab-btn" data-tab="images">
+                            <i class="fas fa-image"></i> Images
+                        </button>
+                        <button class="tab-btn" data-tab="tables">
+                            <i class="fas fa-table"></i> Tables
+                        </button>
+                        <button class="tab-btn" data-tab="text">
+                            <i class="fas fa-file-text"></i> Text Content
+                        </button>
+                        <button class="tab-btn" data-tab="json">
+                            <i class="fas fa-code"></i> Raw JSON
+                        </button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="overview" class="tab-pane active"></div>
+                        <div id="meta" class="tab-pane"></div>
+                        <div id="headings" class="tab-pane"></div>
+                        <div id="links" class="tab-pane"></div>
+                        <div id="images" class="tab-pane"></div>
+                        <div id="tables" class="tab-pane"></div>
+                        <div id="text" class="tab-pane"></div>
+                        <div id="json" class="tab-pane"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Scrape websites in seconds with our optimized engine powered by BeautifulSoup and lxml parser.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <h3>Multiple Extract Modes</h3>
+                    <p>Choose from 8 different scraping modes including text, links, images, tables, meta tags, and custom CSS selectors.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Export Options</h3>
+                    <p>Download scraped data as JSON or copy directly to clipboard for easy integration with other tools.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>RESTful API</h3>
+                    <p>Integrate scraping capabilities into your applications with our easy-to-use REST API endpoints.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Real-time Stats</h3>
+                    <p>View instant statistics including scrape time, number of links, images, and headings found.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Responsive Design</h3>
+                    <p>Beautiful, modern interface that works seamlessly across desktop, tablet, and mobile devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Section -->
+    <section id="documentation" class="documentation-section">
+        <div class="container">
+            <h2 class="section-title">Getting Started</h2>
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <div class="doc-number">1</div>
+                    <h3>Enter URL</h3>
+                    <p>Type or paste the URL of the website you want to scrape. The system will automatically add https:// if not provided.</p>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-number">2</div>
+                    <h3>Select Scrape Type</h3>
+                    <p>Choose what data you want to extract: complete scrape, text only, links, images, headings, meta tags, tables, or use a custom CSS selector.</p>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-number">3</div>
+                    <h3>Scrape & Analyze</h3>
+                    <p>Click "Scrape Now" and view organized results in tabs. Export as JSON or copy to clipboard for further use.</p>
+                </div>
+            </div>
+
+            <div class="api-documentation">
+                <h3><i class="fas fa-code"></i> API Endpoint</h3>
+                <pre><code>POST /api/scrape
+Content-Type: application/json
+
+{
+  "url": "https://example.com",
+  "type": "all",
+  "selector": ".class-name"  // optional
+}</code></pre>
+                <p class="api-note">Response includes status code, timestamp, extracted data organized by type, and scrape time.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Web Scraper Pro. Built with Python, Flask & BeautifulSoup</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
